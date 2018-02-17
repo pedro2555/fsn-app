@@ -1,5 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="shared-styles.html">
+<link rel="lazy-import" href="my-view404.html">
 
 <dom-module id="fsn-flightutils-view">
   <template>
@@ -22,25 +27,34 @@
         pattern="/flightutils/:page"
         data="{{routeData}}">
     </app-route>
+    {{routeData.page}}
+    <iron-pages
+      selected="[[routeData.page]]"
+      attr-for-selected="name"
+      fallback-selection="view404"
+      role="main">
 
-    <div class="card">
-      <iron-pages
-          selected="[[routeData.page]]"
-          attr-for-selected="name"
-          fallback-selection="view404"
-          role="main">
+      <paper-card name="metar" class="card" heading="Search Metar Reports">
+        <div class="card-content">
 
-          <div name="metar">
-            <h1>Metar</h1>
-          </div>
+        </div>
+        <div class="card-actions">
+          <paper-input
+            autocapitalize
+            label="ICAO Code"
+            value="{{icao}}"
+            pattern="^[A-Za-z0-9]{4}$"
+            auto-validate></paper-input>
+          <paper-button>Search</paper-button>
+        </div>
+        </paper-card>
 
-          <div name="oceanic-report">
-            <h1>Oceanic Report Tool</h1>
-          </div>
+        <paper-card class="card" name="oceanic-report" heading="Oceanic Report Tool">
+        </paper-card>
 
         <my-view404 name="view404"></my-view404>
-      </iron-pages>
-    </div>
+
+    </iron-pages>
   </template>
 
   <script>
