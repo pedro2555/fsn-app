@@ -19,12 +19,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="my-icons.html">
 
 <link rel="lazy-import" href="my-view1.html">
 <link rel="lazy-import" href="my-view2.html">
 <link rel="lazy-import" href="my-view3.html">
+<link rel="lazy-import" href="fsn-flightutils-view.html">
 <link rel="lazy-import" href="my-view404.html">
 
 <dom-module id="fsn-app">
@@ -52,6 +54,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .drawer-list {
         margin: 0 20px;
+      }
+
+      .drawer-list iron-collapse {
+        padding: 0 16px;
       }
 
       .drawer-list a {
@@ -86,9 +92,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="[[rootPath]]#/view1">View One</a>
-          <a name="view2" href="[[rootPath]]#/view2">View Two</a>
-          <a name="view3" href="[[rootPath]]#/view3">View Three</a>
+          <a name="flightutils" id="flightutilsButton" on-click="_toggleFlightutils" href="">Flight Utilities</a>
+          <iron-collapse id="flightutilsNav">
+            <a name="metar" href="[[rootPath]]#/flightutils/metar">Metar</a>
+              <a name="metar" href="[[rootPath]]#/flightutils/oceanic-report">Oceanic Report Tool</a>
+          <iron-collapse/>
         </iron-selector>
       </app-drawer>
 
@@ -109,7 +117,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main">
           <my-view1 name="view1"></my-view1>
           <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
+          <fsn-flightutils-view name="flightutils" sub-route="[[subroute]]"></fsn-flightutils-view>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
       </app-header-layout>
@@ -154,7 +162,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+        var resolvedPageUrl = this.resolveUrl('fsn-' + page + '-view.html');
         Polymer.importHref(
             resolvedPageUrl,
             null,
@@ -164,6 +172,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _showPage404() {
         this.page = 'view404';
+      }
+
+      _toggleFlightutils() {
+        this.$.flightutilsNav.toggle();
+        this.$.flightutilsButton.setAttribute(
+          'aria-expanded',
+          this.$.flightutilsNav.opened);
       }
     }
 
