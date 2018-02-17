@@ -1,7 +1,7 @@
 {
-  "name": "My App",
-  "short_name": "My App",
-  "description": "My App description",
+  "name": "FSN App",
+  "short_name": "FSN App",
+  "description": "FSN App",
   "icons": [
     {
       "src": "images/manifest/icon-192x192.png",
