@@ -20,7 +20,10 @@
     "paper-card": "PolymerElements/paper-card#^2.1.0",
     "paper-button": "PolymerElements/paper-button#^2.0.0",
     "avwx-metar": "pedro2555/avwx-metar#^1.0.0",
-    "paper-item": "PolymerElements/paper-item#^2.1.0"
+    "paper-item": "PolymerElements/paper-item#^2.1.0",
+    "paper-fab": "PolymerElements/paper-fab#^2.0.0",
+    "iron-list": "PolymerElements/iron-list#^2.0.12",
+    "iron-icons": "PolymerElements/iron-icons#^2.0.1"
   },
   "resolutions": {
     "polymer": "^2.0.0"

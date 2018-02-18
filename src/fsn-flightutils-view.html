@@ -1,16 +1,19 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/avwx-metar/avwx-metar.html">
 <link rel="import" href="shared-styles.html">
 <link rel="lazy-import" href="my-view404.html">
 
 <dom-module id="fsn-flightutils-view">
-  <template>
+  <template is="dom-bind">
     <style include="shared-styles">
       @media (max-width: 640px) {
         :host {
@@ -30,6 +33,16 @@
       paper-item div {
         white-space: pre-wrap;
       }
+      paper-fab {
+        z-index: 100;
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background-color: var(--app-primary-color);
+      }
+      iron-list {
+        flex: 1 1 auto;
+      }
     </style>
 
     <app-location
@@ -44,6 +57,8 @@
         data="{{routeData}}">
     </app-route>
 
+    <paper-fab icon="icons:add" on-click="_insertStation"></paper-fab>
+
     <iron-pages
       selected="[[routeData.page]]"
       attr-for-selected="name"
@@ -53,29 +68,50 @@
       <avwx-metar
         auto
         station="{{station}}"
-        metar="{{metar}}"></avwx-metar>
-      <paper-card name="weather" class="card" heading="Weather Stations">
-        <div class="card-content">
-          <div role="listbox">
-            <paper-item>
-              <paper-item-body two-line>
-                <div>METAR</div>
-                <div secondary>{{metar}}</div>
-              </paper-item-body>
-            </paper-item>
+        metar="{{metar}}"
+        metar-data="{{metarData}}"></avwx-metar>
+      <list name="weather">
+        <paper-card class="card" heading="Weather Stations">
+          <div class="card-content">
+            <div role="listbox">
+              <paper-item>
+                <paper-item-body two-line>
+                  <div>METAR</div>
+                  <div secondary>{{metar}}</div>
+                </paper-item-body>
+              </paper-item>
+            </div>
           </div>
-        </div>
-        <div class="card-actions">
-          <paper-input
-            autocapitalize
-            label="ICAO Code"
-            value="{{station}}"
-            pattern="^[A-Za-z0-9]{4}$"
-            auto-validate></paper-input>
-        </div>
-        </paper-card>
+          <div class="card-actions">
+            <paper-input
+              autocapitalize
+              label="ICAO Code"
+              value="{{station}}"
+              pattern="^[A-Za-z0-9]{4}$"
+              auto-validate></paper-input>
+          </div>
+          </paper-card>
 
-        <paper-card class="card" name="oceanic-report" heading="Oceanic Report Tool">
+          <template id="stationRepeater" is="dom-repeat" items="[[stationsList]]">
+            <paper-card class="card" heading="{{item.icao}}">
+                <div class="card-content">
+                  <div role="listbox">
+                    <paper-item>
+                      <paper-item-body two-line>
+                        <div>METAR</div>
+                        <div secondary>{{item.metar}}</div>
+                      </paper-item-body>
+                    </paper-item>
+                  </div>
+                </div>
+            </paper-card>
+          </template>
+        </list>
+
+        <paper-card
+          class="card"
+          name="oceanic-report"
+          heading="Oceanic Report Tool">
         </paper-card>
 
         <my-view404 name="view404"></my-view404>
@@ -98,7 +134,21 @@
           // This shouldn't be neccessary, but the Analyzer isn't picking up
           // Polymer.Element#rootPath
           rootPath: String,
+          stationsList: {
+            type: Array,
+            value: []
+          }
         };
+      }
+
+      _insertStation() {
+        if (this.metarData && this.metarData != null) {
+          this.stationsList.push({
+            "icao": this.metarData.Station,
+            "metar": this.metarData['Raw-Report']
+          });
+        }
+        this.$.stationRepeater.render();
       }
     }
 
