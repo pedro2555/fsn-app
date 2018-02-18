@@ -30,10 +30,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <style>
       :host {
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
+        --app-primary-color: #0097a7;
+        --app-secondary-color: #ff4081;
+        --app-default-color: #303030;
+        --app-text-color: #fff;
 
         display: block;
+
+        --app-drawer-content-container: {
+          background-color: var(--app-default-color);
+          color: var(--app-text-color);
+        };
+        --paper-card: {
+          background-color: var(--app-default-color);
+          color: var(--app-text-color);
+          --paper-card-header-color: black;
+        }
       }
 
       app-drawer-layout:not([narrow]) [drawer-toggle] {
@@ -41,9 +53,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       app-header {
-        color: #fff;
+        color: var(--app-text-color);
         background-color: var(--app-primary-color);
       }
+
+
 
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
@@ -61,12 +75,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
         padding: 0 16px;
         text-decoration: none;
-        color: var(--app-secondary-color);
+        color: var(--app-text-color);
         line-height: 40px;
       }
 
       .drawer-list a.iron-selected {
-        color: black;
+        color: var(--app-text-color);
+        background-color: rgba(255, 255, 255, 0.2);
         font-weight: bold;
       }
     </style>
@@ -92,7 +107,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a name="flightutils" id="flightutilsButton" on-click="_toggleFlightutils" href="">Flight Utilities</a>
           <iron-collapse id="flightutilsNav">
             <a name="metar" href="[[rootPath]]#/flightutils/weather">Weather</a>
-              <a name="metar" href="[[rootPath]]#/flightutils/oceanic-report">Oceanic Report Tool</a>
+            <a name="metar" href="[[rootPath]]#/flightutils/oceanic-report">Oceanic Report Tool</a>
           <iron-collapse/>
         </iron-selector>
       </app-drawer>
@@ -147,7 +162,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
         // Default to 'view1' in that case.
-        this.page = page || 'view1';
+        this.page = page || 'view404';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
