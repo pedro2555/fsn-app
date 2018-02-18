@@ -1,0 +1,31 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="shared-styles.html">
+<link rel="lazy-import" href="my-view404.html">
+
+<dom-module id="fsn-telemetry-view">
+  <template is="dom-bind">
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    Works
+  </template>
+
+  <script>
+    class FsnTelemetryView extends Polymer.Element {
+      static get is() { return 'fsn-telemetry-view'; }
+
+      static get properties() {
+        return {
+        };
+      }
+    }
+
+    window.customElements.define(FsnTelemetryView.is, FsnTelemetryView);
+  </script>
+</dom-module>
