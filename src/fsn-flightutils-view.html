@@ -12,6 +12,11 @@
 <dom-module id="fsn-flightutils-view">
   <template>
     <style include="shared-styles">
+      @media (max-width: 640px) {
+        :host {
+          padding: 10px 5px !important;
+        }
+      }
       :host {
         display: block;
 
@@ -21,6 +26,8 @@
       paper-item {
         min-height: 48px;
         padding: 0px 16px;
+      }
+      paper-item div {
         white-space: pre-wrap;
       }
     </style>
@@ -47,7 +54,7 @@
         auto
         station="{{station}}"
         metar="{{metar}}"></avwx-metar>
-      <paper-card name="weather" class="card" heading="Search Weather Reports">
+      <paper-card name="weather" class="card" heading="Weather Stations">
         <div class="card-content">
           <div role="listbox">
             <paper-item>
