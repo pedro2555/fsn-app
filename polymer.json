@@ -2,6 +2,7 @@
   "entrypoint": "index.html",
   "shell": "src/fsn-app.html",
   "fragments": [
+    "src/fsn-telemetry-view.html",
     "src/fsn-flightutils-view.html",
     "src/my-view404.html"
   ],
