@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/google-chart/google-chart.html">
 <link rel="import" href="moment-js.html">
 <link rel="import" href="shared-styles.html">
@@ -32,7 +31,8 @@
 
       <paper-card class="card" heading="Live Altitude Data">
         <paper-input
-          value="{{transponder}}"></paper-input>
+          value="{{transponder}}"
+          label="Transponder"></paper-input>
 
         <google-chart
           id="chart"
@@ -52,7 +52,8 @@
         return {
           'transponder': {
             'type': String,
-            'value': '5a89dfead6baf40004dbae4b'
+            'value': '5a8a4cae54603100045b55c0',
+            'notify': true
           },
           'where': {
             'type': String
@@ -98,7 +99,7 @@
           '{"altitude":{"$exists":true}}'
         ];
 
-        if (lastSeen) {
+        if (false && lastSeen) {
           jointConditions.push('{"_created":{"$gt":"' + lastSeen.format('ddd, D MMM YYYY HH:mm:ss [GMT]') + '"}}');
         }
 
@@ -112,6 +113,7 @@
         if (!data['_items']) { return; }
         data = data['_items'];
 
+        this.chartData = [];
         for (var i = 0, len = data.length; i < len; i++) {
           let timestamp = moment(data[i].timestamp);
           if (!this.lastSeen || !this.lastSeen > timestamp) {
