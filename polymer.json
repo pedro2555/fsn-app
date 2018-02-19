@@ -5,6 +5,7 @@
     "src/fsn-vatsim-events-view.html",
     "src/fsn-weather-view.html",
     "src/fsn-oceanic-report-view.html",
+    "src/fsn-telemetry-view.html",
     "src/fsn-404-view.html"
   ],
   "sources": [
