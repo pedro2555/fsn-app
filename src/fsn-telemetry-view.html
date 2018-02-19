@@ -1,5 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/google-chart/google-chart.html">
+<link rel="import" href="moment-js.html">
 <link rel="import" href="shared-styles.html">
 <link rel="lazy-import" href="my-view404.html">
 
@@ -11,10 +16,33 @@
 
         padding: 10px;
       }
+
+      google-chart {
+        width: 100%;
+      }
     </style>
 
-    Works
-  </template>
+    <iron-ajax
+      auto
+      id="apiAjax"
+      url='{{url}}'
+      handle-as="json"
+      last-response="{{apiData}}">
+    </iron-ajax>
+
+      <paper-card class="card" heading="Live Altitude Data">
+        <paper-input
+          value="{{transponder}}"></paper-input>
+
+        <google-chart
+          id="chart"
+          type='line'
+          options='{"title": "Altitude Graph"}'
+          cols='[{"label":"time", "type":"datetime"}, {"label":"Altitude", "type":"number"}]'
+          rows='{{chartData}}'>
+        </google-chart>
+      </paper-card>
+    </template>
 
   <script>
     class FsnTelemetryView extends Polymer.Element {
@@ -22,7 +50,79 @@
 
       static get properties() {
         return {
+          'transponder': {
+            'type': String,
+            'value': '5a89dfead6baf40004dbae4b'
+          },
+          'where': {
+            'type': String
+          },
+          'apiData': {
+            'type': Object,
+            'value': {}
+          },
+          'chartData': {
+            'type': Array,
+            'value': []
+          },
+          'lastSeen': {
+            'type': Object
+          },
+          'url': {
+            'type': String,
+            'computed': '_computeUrl(transponder, lastSeen)'
+          }
         };
+      }
+
+      static get observers() {
+        return [
+          '_handleResponse(apiData)'
+        ];
+      };
+
+      ready() {
+        super.ready();
+
+        var ajax = this.$.apiAjax;
+        setInterval(() => {
+            ajax.generateRequest();
+        }, 10000);
+      }
+
+
+      //https://fsn-flight-data.herokuapp.com/position-reports?where={"$and":[{"transponder":"5a89dfead6baf40004dbae4b"},{"altitude":{"$exists":true}}]}&sort=-timestamp
+      _computeUrl(transponder, lastSeen) {
+        var jointConditions = [
+          '{"transponder":"' + transponder + '"}',
+          '{"altitude":{"$exists":true}}'
+        ];
+
+        if (lastSeen) {
+          jointConditions.push('{"_created":{"$gt":"' + lastSeen.format('ddd, D MMM YYYY HH:mm:ss [GMT]') + '"}}');
+        }
+
+        return [
+          'https://fsn-flight-data.herokuapp.com/position-reports?where=',
+          '{"$and":[' + jointConditions.join(',') + ']}&sort=-timestamp'
+        ].join('');
+      }
+
+      _handleResponse(data) {
+        if (!data['_items']) { return; }
+        data = data['_items'];
+
+        for (var i = 0, len = data.length; i < len; i++) {
+          let timestamp = moment(data[i].timestamp);
+          if (!this.lastSeen || !this.lastSeen > timestamp) {
+            this.lastSeen = timestamp;
+          }
+
+          this.chartData.push([
+            timestamp.toDate(),
+            data[i].altitude
+          ]);
+        }
       }
     }
 
