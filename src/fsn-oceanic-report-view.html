@@ -1,0 +1,382 @@
+<!--
+@license
+Pedro's Toolbox App
+Copyright (C) 2017  Pedro Rodrigues <prodrigues1990@gmail.com>
+
+This file is part of Pedro's Toolbox App.
+
+Pedro's Toolbox App is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, version 2 of the License.
+
+Pedro's Toolbox App is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Pedro's Toolbox App.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../shared-styles.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="fsn-oceanic-report-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+      .item-group {
+        display: inline-block;
+        margin: 14px auto;
+      }
+      paper-input,
+      paper-checkbox {
+        margin: 14px auto;
+      }
+      .group2 {
+        display: inline-block;
+        width: 49.5%;
+      }
+      .group3 {
+        display: inline-block;
+        width: 32.8%;
+      }
+      .group4 {
+        display: inline-block;
+        width: 24.5%;
+      }
+      .long {
+        padding-top: 15px;
+        padding-bottom: 15px;
+      }
+      .warp {
+        white-space: pre-wrap;
+      }
+    </style>
+
+    <paper-card class="card" heading="Oceanic Report Tool">
+
+      <paper-input class="group3"
+                   autocapitalize
+                   label="Destination"
+                   value="{{destination}}"
+                   pattern="^[A-Za-z0-9]{4}$"
+                   auto-validate>
+      </paper-input>
+
+      <paper-input class="group3"
+                   autocapitalize
+                   label="Cruise Altitude"
+                   value="{{cruiseAltitude}}"
+                   pattern="^[\d]{2}0$"
+                   auto-validate>
+      </paper-input>
+
+      <paper-input class="group3"
+                   autocapitalize
+                   label="Cruise Speed"
+                   value="{{cruiseSpeed}}"
+                   pattern="^\.[\d]{2}$"
+                   auto-validate>
+      </paper-input>
+
+      <paper-textarea autocapitalize
+                      label="Oceanic Route"
+                      value="{{oceanicRoute}}">
+      </paper-textarea>
+
+      <paper-icon-item>
+        <paper-item-body two-line>
+          <div>{{_getCurrentWaypoint(oceanicRoute, currentPosition)}}</div>
+          <div secondary>Flying to position</div>
+        </paper-item-body>
+      </paper-icon-item>
+
+      <paper-input class="" label="Time in simulator"
+                   value="{{_timeInSim}}"
+                   pattern="^([01]\d|2[0-3]):?([0-5]\d)$"
+                   auto-validate>
+      </paper-input>
+
+      <!--
+      Oceanic Entry
+      -->
+      <template is="dom-if" if="{{_requiresClearence(currentPosition)}}">
+
+        <!--Get time at position from user-->
+        <paper-input class="group2"
+                     label="Simulator time at {{_getCurrentWaypoint(oceanicRoute, currentPosition)}}"
+                     value="{{_timeAtCurrent}}"
+                     pattern="^([01]\d|2[0-3]):?([0-5]\d)$"
+                     auto-validate>
+        </paper-input>
+
+        <!--Show usefull phraseology-->
+        <paper-icon-item class="long">
+          <paper-item-body two-line>
+            <div class="warp">{{clearencePhraseology}}</div>
+            <div secondary>Clearence phraseology</div>
+          </paper-item-body>
+        </paper-icon-item>
+
+      </template>
+
+      <!--
+      Position report
+      -->
+      <template is="dom-if" if="{{_hasClearence(currentPosition)}}">
+
+        <!--Get time at position from user-->
+        <paper-input class="group2"
+                     label="Simulator time at {{_getCurrentWaypoint(oceanicRoute, currentPosition)}}"
+                     value="{{_timeAtCurrent}}"
+                     pattern="^([01]\d|2[0-3]):?([0-5]\d)$"
+                     auto-validate>
+        </paper-input>
+
+        <!--Get time at next position from user-->
+        <paper-input class="group2"
+                     label="Simulator time at {{_getNextWaypoint(oceanicRoute, currentPosition)}}"
+                     value="{{_timeAtNext}}"
+                     pattern="^([01]\d|2[0-3]):?([0-5]\d)$"
+                     auto-validate>
+        </paper-input>
+
+        <!--Show usefull phraseology-->
+        <paper-item>
+          <paper-item-body two-line>
+            <div>{{positionReportPhraseology}}</div>
+            <div secondary>Position report phraseology</div>
+          </paper-item-body>
+        </paper-item>
+
+      </template>
+
+      <paper-item>
+        <div class="item-group">
+          <template is="dom-if" if="{{_canRewind(currentPosition, oceanicRoute)}}">
+            <paper-button on-tap="handleRewindClick">Previous</paper-button>
+          </template>
+          <template is="dom-if" if="{{_canAdvance(currentPosition, oceanicRoute)}}">
+            <paper-button on-tap="handleAdvanceClick">Next</paper-button>
+          </template>
+        </div>
+      </paper-item>
+    </paper-card>
+  </template>
+
+  <script>
+    class FsnOceanicReportView extends Polymer.Element {
+      static get is() { return 'fsn-oceanic-report-view'; }
+
+      static get properties() {
+        return {
+          currentPosition: {
+            type: Number,
+            value: -1,
+            notify: true
+          },
+          oceanicRoute: {
+            type: String,
+            notify: true,
+            reflectToAttribute: true,
+            value: ""
+          },
+          destination: {
+            type: String,
+            notify: true,
+            reflectToAttribute: true,
+            value: ""
+          },
+          cruiseSpeed: {
+            type: String,
+            notify: true,
+            reflectToAttribute: true,
+            value: ""
+          },
+          cruiseAltitude: {
+            type: String,
+            notify: true,
+            reflectToAttribute: true,
+            value: ""
+          },
+          _timeInSim: {
+            type: String,
+            notify: true,
+            value: function() {
+              var datetime = new Date();
+              return this._getStringFromDate(datetime);
+            }
+          },
+          _timeAtCurrent: {
+            type: String,
+            notify: true,
+            value: function() {
+              var datetime = new Date();
+              return this._getStringFromDate(datetime);
+            }
+          },
+          _timeAtNext: {
+            type: String,
+            notify: true,
+            value: function() {
+              var datetime = new Date();
+              return this._getStringFromDate(datetime);
+            }
+          },
+          clearencePhraseology: {
+            computed: '_getClearencePhraseology(destination, oceanicRoute, cruiseAltitude, cruiseSpeed, timeAtCurrent)'
+          },
+          positionReportPhraseology: {
+            computed: '_getPositionReportPhraseology(oceanicRoute, currentPosition, cruiseAltitude, cruiseSpeed, timeAtCurrent, timeAtNext)'
+          },
+          timeAtCurrent: {
+            computed: '_getActualTimeAtPosition(_timeInSim, _timeAtCurrent)'
+          },
+          timeAtNext: {
+            computed: '_getActualTimeAtPosition(_timeInSim, _timeAtNext)'
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+            // go back to clearence on new routes (unfortunately, also on route corrections)
+            '_updatePosition(oceanicRoute)'
+        ]
+      }
+
+      _getClearencePhraseology(destination, route, cruiseAltitude, cruiseSpeed, timeAtCurrent) {
+        return "Requesting clearence to " + destination + " via " + route + ", FL" + cruiseAltitude + ", Mach " + cruiseSpeed + ", estimating " + this._getCurrentWaypoint(route, -1) + " at time " + timeAtCurrent + " zulu";
+      }
+
+      _getPositionReportPhraseology(route, position, cruiseAltitude, cruiseSpeed, timeAtCurrent, timeAtNext) {
+        // current position
+        var report = "Reporting position " + this._getCurrentWaypoint(route, position) + " at time " + timeAtCurrent + " zulu, FL" + cruiseAltitude + ", Mach " + cruiseSpeed;
+
+        // next position
+        if (this._getNextWaypoint(route, position) != "") {
+          report += ", estimating " + this._getNextWaypoint(route, position) + " at time " + timeAtNext + " zulu";
+        }
+
+        // position after next
+        if (this._getAfterNextWaypoint(route, position) != "") {
+          report += ", next is " + this._getAfterNextWaypoint(route, position);
+        }
+
+        return report;
+      }
+
+      _getActualTimeAtPosition(_timeInSim, _timeAtPosition) {
+        _timeInSim      = this._getDateFromUTCString(_timeInSim);
+        _timeAtPosition = this._getDateFromUTCString(_timeAtPosition);
+
+        var diff = _timeAtPosition.getTime() - _timeInSim.getTime();
+        var utc = new Date().getTime();
+
+        return this._getStringFromDate(new Date(utc + diff));
+      }
+
+      _getDateFromUTCString(timeString) {
+        var datetime = new Date();
+
+        datetime.setUTCHours(timeString.substring(0, 2));
+        datetime.setUTCMinutes(timeString.substring(2));
+
+        return datetime;
+      }
+
+      _getStringFromDate(datetime) {
+        return datetime.getUTCHours().toString().padStart(2, "0") + datetime.getUTCMinutes().toString().padStart(2, "0");
+      }
+
+      _updatePosition(route) {
+        this.currentPosition = -1;
+      }
+
+      _requiresClearence(position) {
+        return (position == -1);
+      }
+
+      _hasClearence(position) {
+        return (position > -1);
+      }
+
+      _getCurrentWaypoint(route, position) {
+        position = (position == -1) ? 0 : position
+        var waypoints = route.split(" ");
+        if (waypoints.length >= position + 1) {
+          return waypoints[position];
+        } else {
+          return "";
+        }
+      }
+
+      _getNextWaypoint(route, position) {
+        position = (position == -1) ? 0 : position
+        var waypoints = route.split(" ");
+        if (waypoints.length >= position + 2) {
+          return waypoints[position + 1];
+        } else {
+          return "";
+        }
+      }
+
+      _getAfterNextWaypoint(route, position) {
+        position = (position == -1) ? 0 : position
+        var waypoints = route.split(" ");
+        if (waypoints.length >= position + 3) {
+          return waypoints[position + 2];
+        } else {
+          return "";
+        }
+      }
+
+      _canAdvance(position, route) {
+        var waypoints = route.split(" ");
+        // if on the last waypoint do not advance
+        return (position < waypoints.length - 1);
+      }
+
+      handleAdvanceClick() {
+        var waypoints = this.oceanicRoute.split(" ");
+        if (this._canAdvance(this.currentPosition, this.oceanicRoute)) {
+          if (this.currentPosition >= 0) {
+            this.timeAtCurrent = this.timeAtNext;
+            this.timeAtNext = "";
+          }
+
+          this.currentPosition++;
+        }
+      }
+
+      _canRewind(position, route) {
+        return (position > -1);
+      }
+
+      handleRewindClick() {
+        if (this._canRewind(this.currentPosition, this.oceanicRoute)) {
+          this.timeAtCurrent = "";
+          this.timeAtNext = "";
+          this.currentPosition--;
+        }
+      }
+
+    }
+
+    window.customElements.define(FsnOceanicReportView.is, FsnOceanicReportView);
+  </script>
+</dom-module>

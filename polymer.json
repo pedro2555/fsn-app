@@ -3,6 +3,7 @@
   "shell": "src/fsn-app.html",
   "fragments": [
     "src/fsn-weather-view.html",
+    "src/fsn-oceanic-report-view.html",
     "src/my-view404.html"
   ],
   "sources": [
