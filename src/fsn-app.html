@@ -117,14 +117,14 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <app-menu selected="0">
+          <app-menu selected="[[page]]">
             <app-submenu>
               <div class="app-menu-item" slot="submenu-trigger">
                 <app-menu-item >VATSIM</app-menu-item>
                 <iron-icon icon="expand-more"></iron-icon>
               </div>
               <app-menu slot="submenu-content">
-                <a class="app-menu-item" href="#/vatsim/vatsim-events">Events (Beta)</a>
+                <a name="vatsim-events" class="app-menu-item" href="#/vatsim/vatsim-events">Events (Beta)</a>
               </app-menu>
             </app-submenu>
 
@@ -134,8 +134,8 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
                 <iron-icon icon="expand-more"></iron-icon>
               </div>
               <app-menu slot="submenu-content">
-                <a class="app-menu-item" href="#/flightutils/weather">Weather</a>
-                <a class="app-menu-item" href="#/flightutils/oceanic-report">Oceanic Report Tool</a>
+                <a name="weather" class="app-menu-item" href="#/flightutils/weather">Weather</a>
+                <a name="oceanic-report" class="app-menu-item" href="#/flightutils/oceanic-report">Oceanic Report Tool</a>
               </app-menu>
             </app-submenu>
 
