@@ -181,9 +181,8 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
           ].join('/'),
           [
             'where=' + JSON.stringify({
-              "starts": {
-                "$gte": moment().startOf('day')
-                        .format('YYYY-MM-DD\\THH:mm:ss\\Z')
+              "ends": {
+                "$gte": moment().format('YYYY-MM-DD\\THH:mm:ss\\Z')
               }
             }),
             'sort=starts'
