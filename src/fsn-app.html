@@ -84,6 +84,9 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
         color: black;
         font-weight: bold;
       }
+      .app-menu-item {
+        padding: 0px 16px;
+      }
     </style>
 
     <app-location
@@ -117,8 +120,8 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
           <app-menu selected="0">
             <app-submenu>
               <div class="app-menu-item" slot="submenu-trigger">
-                <app-menu-icon-item >VATSIM</app-menu-icon-item>
-                <iron-icon icon="expand-more" class="expand-icon"></iron-icon>
+                <app-menu-item >VATSIM</app-menu-item>
+                <iron-icon icon="expand-more"></iron-icon>
               </div>
               <app-menu slot="submenu-content">
                 <a class="app-menu-item" href="#/vatsim/vatsim-events">Events (Beta)</a>
@@ -127,8 +130,8 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
             <app-submenu>
               <div class="app-menu-item" slot="submenu-trigger">
-                <app-menu-icon-item >Flight Utilities</app-menu-icon-item>
-                <iron-icon icon="expand-more" class="expand-icon"></iron-icon>
+                <app-menu-item >Flight Utilities</app-menu-item>
+                <iron-icon icon="expand-more"></iron-icon>
               </div>
               <app-menu slot="submenu-content">
                 <a class="app-menu-item" href="#/flightutils/weather">Weather</a>
@@ -137,7 +140,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
             </app-submenu>
 
             <a class="app-menu-item" href="javascript:void(0)">
-              <app-menu-icon-item >Help</app-menu-icon-item>
+              <app-menu-item >Help</app-menu-item>
             </a>
           </app-menu>
         </iron-selector>
