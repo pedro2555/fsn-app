@@ -24,7 +24,10 @@
     "paper-fab": "PolymerElements/paper-fab#^2.0.0",
     "iron-list": "PolymerElements/iron-list#^2.0.12",
     "iron-icons": "PolymerElements/iron-icons#^2.0.1",
-    "app-menu": "oyeharry/app-menu#^2.1.1"
+    "app-menu": "oyeharry/app-menu#^2.1.1",
+    "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#^2.0.0",
+    "iron-ajax": "PolymerElements/iron-ajax#^2.1.2",
+    "iron-scroll-target-behavior": "PolymerElements/iron-scroll-target-behavior#^2.1.0"
   },
   "resolutions": {
     "polymer": "^2.0.0"

@@ -18,15 +18,77 @@ You should have received a copy of the GNU General Public License
 along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="fsn-vatsim-events-view">
   <template is="dom-bind">
     <style include="shared-styles">
+      :host {
+        display: flex;
+        flex-wrap: wrap;
+        height: calc(100vh - 64px);
+        padding: 16px;
+      }
+      paper-card {
+        --paper-card: {
+          flex: 0 1 calc(45% - 1em);
 
+          overflow: hidden;
+          max-width: 450px;
+          margin: 16px;
+        }
+      }
     </style>
 
-    VATSIM Events
+    <iron-ajax
+      id="ajax"
+      url="https://vateud-events-api.herokuapp.com/events"
+      last-response="{{data}}">
+      </iron-ajax>
+
+    <iron-scroll-threshold
+      id="scrollThreshold"
+      lower-threshold="500"
+      on-lower-threshold="_loadMoreData">
+    </iron-scroll-threshold>
+
+    <template is="dom-repeat" items="[[items]]">
+      <paper-card image="[[item.banner_url]]">
+      <div class="card-content">
+        <div class="cafe-header">[[item.title]]
+          <div class="cafe-location cafe-light">
+            <iron-icon icon="communication:location-on"></iron-icon>
+            <span>250ft</span>
+          </div>
+        </div>
+        <div class="cafe-rating">
+          <iron-icon class="star" icon="star"></iron-icon>
+          <iron-icon class="star" icon="star"></iron-icon>
+          <iron-icon class="star" icon="star"></iron-icon>
+          <iron-icon class="star" icon="star"></iron-icon>
+          <iron-icon class="star" icon="star"></iron-icon>
+        </div>
+        <p>$・Italian, Cafe</p>
+        <p class="cafe-light">Small plates, salads &amp; sandwiches in an intimate setting.</p>
+      </div>
+      <div class="card-actions">
+        <div class="horizontal justified">
+          <paper-icon-button icon="icons:event"></paper-icon-button>
+          <paper-button>5:30PM</paper-button>
+          <paper-button>7:30PM</paper-button>
+          <paper-button>9:00PM</paper-button>
+          <paper-button class="cafe-reserve">Reserve</paper-button>
+        </div>
+      </div>
+    </paper-card>
+    </template>
 
   </template>
 
@@ -36,7 +98,50 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
       static get properties() {
         return {
+          items: {
+            type: Array,
+            value: []
+          },
+          data: {
+            type: Object,
+            value: {}
+          }
         };
+      }
+
+      ready() {
+        super.ready();
+
+        this.$.ajax.generateRequest();
+      }
+
+      static get observers() {
+        return [
+          '_onDataReceive(data)',
+        ];
+      }
+
+      _onDataReceive(data) {
+        this.$.scrollThreshold.clearTriggers();
+
+        if (data == undefined) {
+          return;
+        }
+        if (data._items != undefined) {
+          this.items = this.items.concat(data._items);
+        }
+        if (data._links) {
+          this.$.ajax.url = (data._links.next) ?
+           "https://vateud-events-api.herokuapp.com/" + data._links.next.href :
+           "";
+        }
+      }
+
+      _loadMoreData() {
+        console.log('load more');
+        if (this.$.ajax.activeRequests.length == 0) {
+          this.$.ajax.generateRequest();
+        }
       }
 
     }
