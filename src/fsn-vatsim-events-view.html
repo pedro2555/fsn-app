@@ -23,6 +23,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../bower_components/paper-styles/typography.html">
@@ -32,11 +33,23 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 <dom-module id="fsn-vatsim-events-view">
   <template is="dom-bind">
     <style include="shared-styles">
+      @media (max-width: 640px) {
+        :host {
+          padding: 3px !important;
+        }
+      }
       :host {
         display: flex;
         flex-wrap: wrap;
         height: calc(100vh - 64px);
         padding: 16px;
+      }
+      @media (max-width: 640px) {
+        paper-card {
+          --paper-card: {
+            margin: 3px !important;
+          }
+        }
       }
       paper-card {
         --paper-card: {
@@ -46,6 +59,9 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
           min-width: 350px;
           margin: 16px;
         }
+      }
+      paper-button > iron-icon {
+        margin-right: 0.57em;
       }
 
       .card-header {
@@ -77,21 +93,14 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       id="domRepeat">
       <paper-card image="[[item.banner_url]]">
       <div class="card-content">
-        <div class="card-header">[[item.title]]
-          <div class="card-location card-light">
-            <iron-icon icon="communication:location-on"></iron-icon>
-          </div>
-        </div>
-        <p>$・[[item.airports]]</p>
-        <p class="card-light">Small plates, salads &amp; sandwiches in an intimate setting.</p>
+        <div class="card-header">[[item.title]]</div>
+        <paper-item>[[item.duration]] hour event, starts [[item.starts]] for </paper-item>
       </div>
-      <div class="card-actions">
+      <!-- <div class="card-actions">
         <div class="horizontal justified">
-          <paper-icon-button icon="icons:event"></paper-icon-button>
-          <paper-button>[[item.starts]]</paper-button>
-          <paper-button>[[item.ends]]</paper-button>
+          <paper-button raised><iron-icon icon="icons:event"></iron-icon>  ADD TO CALENDAR</paper-button>
         </div>
-      </div>
+      </div> -->
     </paper-card>
     </template>
 
@@ -153,8 +162,8 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
               'title': item.title,
               'subtitle': item.subtitle,
               'banner_url': item.banner_url,
-              'ends': moment(item.ends).calendar(),
-              'starts': moment(item.starts).calendar()
+              'starts': moment(item.starts).calendar(),
+              'duration': moment(item.ends).diff(moment(item.starts), 'hours')
             });
           }
         }
