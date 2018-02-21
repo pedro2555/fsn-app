@@ -84,25 +84,25 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       id="scrollThreshold"
       lower-threshold="500"
       on-lower-threshold="_loadMoreData">
-    </iron-scroll-threshold>
 
-    <template
-      is="dom-repeat"
-      items="{{items}}"
-      scroll-target="scrollThreshold"
-      id="domRepeat">
-      <paper-card image="[[item.banner_url]]">
-      <div class="card-content">
-        <div class="card-header">[[item.title]]</div>
-        <paper-item>[[item.duration]] hour event, starts [[item.starts]] for </paper-item>
-      </div>
-      <!-- <div class="card-actions">
-        <div class="horizontal justified">
-          <paper-button raised><iron-icon icon="icons:event"></iron-icon>  ADD TO CALENDAR</paper-button>
+      <template
+        is="dom-repeat"
+        items="{{items}}"
+        id="domRepeat">
+        <paper-card image="[[item.banner_url]]">
+        <div class="card-content">
+          <div class="card-header">[[item.title]]</div>
+          <paper-item>[[item.duration]] hour event, starts [[item.starts]]</paper-item>
         </div>
-      </div> -->
-    </paper-card>
-    </template>
+        <!-- <div class="card-actions">
+          <div class="horizontal justified">
+            <paper-button raised><iron-icon icon="icons:event"></iron-icon>  ADD TO CALENDAR</paper-button>
+          </div>
+        </div> -->
+        </paper-card>
+      </template>
+
+    </iron-scroll-threshold>
 
   </template>
 
@@ -150,11 +150,6 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
           this.$.ajax.url = this._generateUrl(data._links);
         }
 
-        moment.updateLocale('en-fsn', {
-          language: 'en',
-          timeFormat: 24,
-          units: 'metric'
-        });
         // populate the item list
         if (data._items != undefined) {
           for (let item of data._items) {
@@ -192,10 +187,11 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       }
 
       _loadMoreData() {
-        console.log('load more');
         if (this.$.ajax.activeRequests.length == 0) {
           this.$.ajax.generateRequest();
         }
+
+        this.$.scrollThreshold.clearTriggers();
       }
     }
 
