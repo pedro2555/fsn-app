@@ -2,6 +2,7 @@
   "entrypoint": "index.html",
   "shell": "src/fsn-app.html",
   "fragments": [
+    "src/fsn-vatsim-events-view.html",
     "src/fsn-weather-view.html",
     "src/fsn-oceanic-report-view.html",
     "src/my-view404.html"
