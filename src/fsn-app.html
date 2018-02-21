@@ -27,9 +27,13 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-menu/app-menu.html">
+<link rel="import" href="../bower_components/app-menu/app-submenu.html">
+<link rel="import" href="../bower_components/app-menu/app-menu-icon-item.html">
 <link rel="import" href="my-icons.html">
 
 <link rel="lazy-import" href="fsn-weather-view.html">
@@ -102,11 +106,23 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="flightutils" id="flightutilsButton" on-click="_toggleFlightutils" href="">Flight Utilities</a>
-          <iron-collapse id="flightutilsNav">
-            <a name="metar" href="[[rootPath]]#/flightutils/weather">Weather</a>
-            <a name="metar" href="[[rootPath]]#/flightutils/oceanic-report">Oceanic Report Tool</a>
-          <iron-collapse/>
+          <app-menu selected="0">
+
+            <app-submenu>
+              <div class="app-menu-item" slot="submenu-trigger">
+                <app-menu-icon-item >Flight Utilities</app-menu-icon-item>
+                <iron-icon icon="expand-more" class="expand-icon"></iron-icon>
+              </div>
+              <app-menu slot="submenu-content">
+                <a class="app-menu-item" href="#/flightutils/weather">Weather</a>
+                <a class="app-menu-item" href="#/flightutils/oceanic-report">Oceanic Report Tool</a>
+              </app-menu>
+            </app-submenu>
+
+            <a class="app-menu-item" href="javascript:void(0)">
+              <app-menu-icon-item >Help</app-menu-icon-item>
+            </a>
+          </app-menu>
         </iron-selector>
       </app-drawer>
 
