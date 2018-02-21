@@ -33,12 +33,17 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 <dom-module id="fsn-vatsim-events-view">
   <template is="dom-bind">
     <style include="shared-styles">
+      :host {
+        display: flex;
+        flex-wrap: wrap;
+        height: calc(100vh - 64px);
+      }
       @media (max-width: 640px) {
-        :host {
+        iron-list {
           padding: 3px !important;
         }
       }
-      :host {
+      iron-list {
         display: flex;
         flex-wrap: wrap;
         height: calc(100vh - 64px);
