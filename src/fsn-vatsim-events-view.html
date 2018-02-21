@@ -25,6 +25,8 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="moment-js.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="fsn-vatsim-events-view">
@@ -38,12 +40,21 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       }
       paper-card {
         --paper-card: {
-          flex: 0 1 calc(45% - 1em);
+          flex: 1 1 calc(45% - 1em);
 
           overflow: hidden;
-          max-width: 450px;
+          min-width: 350px;
           margin: 16px;
         }
+      }
+
+      .card-header {
+        color: var(--text-secondary-color);
+        @apply --paper-font-display1;
+      }
+      .card-location {
+        color: var(--primary-text-color);
+        @apply --paper-font-body2;
       }
     </style>
 
@@ -51,7 +62,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       id="ajax"
       url="https://vateud-events-api.herokuapp.com/events"
       last-response="{{data}}">
-      </iron-ajax>
+    </iron-ajax>
 
     <iron-scroll-threshold
       id="scrollThreshold"
@@ -59,32 +70,26 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       on-lower-threshold="_loadMoreData">
     </iron-scroll-threshold>
 
-    <template is="dom-repeat" items="[[items]]">
+    <template
+      is="dom-repeat"
+      items="{{items}}"
+      scroll-target="scrollThreshold"
+      id="domRepeat">
       <paper-card image="[[item.banner_url]]">
       <div class="card-content">
-        <div class="cafe-header">[[item.title]]
-          <div class="cafe-location cafe-light">
+        <div class="card-header">[[item.title]]
+          <div class="card-location card-light">
             <iron-icon icon="communication:location-on"></iron-icon>
-            <span>250ft</span>
           </div>
         </div>
-        <div class="cafe-rating">
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-        </div>
-        <p>$・Italian, Cafe</p>
-        <p class="cafe-light">Small plates, salads &amp; sandwiches in an intimate setting.</p>
+        <p>$・[[item.airports]]</p>
+        <p class="card-light">Small plates, salads &amp; sandwiches in an intimate setting.</p>
       </div>
       <div class="card-actions">
         <div class="horizontal justified">
           <paper-icon-button icon="icons:event"></paper-icon-button>
-          <paper-button>5:30PM</paper-button>
-          <paper-button>7:30PM</paper-button>
-          <paper-button>9:00PM</paper-button>
-          <paper-button class="cafe-reserve">Reserve</paper-button>
+          <paper-button>[[item.starts]]</paper-button>
+          <paper-button>[[item.ends]]</paper-button>
         </div>
       </div>
     </paper-card>
@@ -100,6 +105,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
         return {
           items: {
             type: Array,
+            notify: true,
             value: []
           },
           data: {
@@ -112,6 +118,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       ready() {
         super.ready();
 
+        this.$.ajax.url = this._generateUrl({});
         this.$.ajax.generateRequest();
       }
 
@@ -122,19 +129,57 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       }
 
       _onDataReceive(data) {
+        // there is nothing for us to see here
+        if (data == undefined) {
+          return false;
+        }
+
+        // trigger stuff on the iron-scroll-threshold thingy
         this.$.scrollThreshold.clearTriggers();
 
-        if (data == undefined) {
-          return;
-        }
-        if (data._items != undefined) {
-          this.items = this.items.concat(data._items);
-        }
         if (data._links) {
-          this.$.ajax.url = (data._links.next) ?
-           "https://vateud-events-api.herokuapp.com/" + data._links.next.href :
-           "";
+          this.$.ajax.url = this._generateUrl(data._links);
         }
+
+        moment.updateLocale('en-fsn', {
+          language: 'en',
+          timeFormat: 24,
+          units: 'metric'
+        });
+        // populate the item list
+        if (data._items != undefined) {
+          for (let item of data._items) {
+            this.items.push({
+              'title': item.title,
+              'subtitle': item.subtitle,
+              'banner_url': item.banner_url,
+              'ends': moment(item.ends).calendar(),
+              'starts': moment(item.starts).calendar()
+            });
+          }
+        }
+        // dom-repeat isn't picking up the changes, so we need to force render
+        this.$.domRepeat.render();
+
+        return true;
+      }
+
+      _generateUrl(links) {
+        return [
+          [
+            "https://vateud-events-api.herokuapp.com",
+            (links.next) ? links.next.href + '&' : "events?"
+          ].join('/'),
+          [
+            'where=' + JSON.stringify({
+              "starts": {
+                "$gte": moment().startOf('day')
+                        .format('YYYY-MM-DD\\THH:mm:ss\\Z')
+              }
+            }),
+            'sort=starts'
+          ].join('&')
+        ].join('');
       }
 
       _loadMoreData() {
@@ -143,7 +188,6 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
           this.$.ajax.generateRequest();
         }
       }
-
     }
 
     window.customElements.define(FsnVatsimEventsView.is, FsnVatsimEventsView);
