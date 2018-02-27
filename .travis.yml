@@ -19,8 +19,8 @@ script:
 deploy:
   provider: pages
   local-dir: build/default
-  repo: fsn
-  target-branch: gh-pages
+  repo: pedro2555/fsn
+  target-branch: master
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
   on:
