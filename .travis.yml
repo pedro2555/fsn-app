@@ -15,10 +15,10 @@ before_script:
 - npm install -g polymer-cli bower
 - bower install
 script:
-- polymer build --bundle --js-minify --css-minify --html-minify
+- polymer build
 deploy:
   provider: pages
-  local-dir: build/default
+  local-dir: build/github.io
   repo: pedro2555/fsn
   target-branch: master
   skip-cleanup: true

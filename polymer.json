@@ -21,26 +21,18 @@
   "builds": [
     {
       "name": "heroku",
-      "bundle": {
-        "stripComments": true,
-        "inlineCss": false,
-        "sourcemaps": true
-      },
+      "bundle": true,
       "js": {"minify": true},
       "css": {"minify": true},
       "html": {"minify": true}
     },
     {
       "name": "github.io",
-      "bundle": {
-        "stripComments": true,
-        "inlineCss": false,
-        "sourcemaps": true
-      },
+      "bundle": true,
       "js": {"minify": true},
       "css": {"minify": true},
       "html": {"minify": true},
-      "basePath": "/fsn"
+      "basePath": "fsn"
     }
   ]
 }
