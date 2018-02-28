@@ -98,7 +98,9 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
     <app-route
         route="{{route}}"
-        pattern="/">
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}">
     </app-route>
     <app-route
         route="{{route}}"
@@ -140,7 +142,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
               </app-menu>
             </app-submenu>
 
-            <a class="app-menu-item" href="#/telemetry">
+            <a class="app-menu-item" name="telemetry" href="#/telemetry">
               <app-menu-item>Live Telemetry</app-menu-item>
             </a>
           </app-menu>
