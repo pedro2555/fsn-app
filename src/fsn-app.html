@@ -39,7 +39,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="lazy-import" href="fsn-weather-view.html">
 <link rel="lazy-import" href="fsn-oceanic-report-view.html">
 <link rel="lazy-import" href="fsn-vatsim-events-view.html">
-<link rel="lazy-import" href="my-view404.html">
+<link rel="lazy-import" href="fsn-404-view.html">
 
 <dom-module id="fsn-app">
   <template>
@@ -159,12 +159,12 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
         <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
-            fallback-selection="view404"
+            fallback-selection="404"
             role="main">
           <fsn-vatsim-events-view name="vatsim-events"></fsn-vatsim-events-view>
           <fsn-weather-view name="weather"></fsn-weather-view>
           <fsn-oceanic-report-view name="oceanic-report"></fsn-oceanic-report-view>
-          <my-view404 name="view404"></my-view404>
+          <fsn-404-view name="404"></fsn-404-view>
         </iron-pages>
       </app-header-layout>
     </app-drawer-layout>
@@ -198,7 +198,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
         // Default to 'view1' in that case.
-        this.page = page || 'view1';
+        this.page = page || '404';
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
@@ -216,7 +216,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       }
 
       _showPage404() {
-        this.page = 'view404';
+        this.page = '404';
       }
 
       _toggleFlightutils() {
