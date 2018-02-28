@@ -16,6 +16,8 @@ before_script:
 - bower install
 script:
 - polymer build
+after_success:
+- wget -O build/github.io/README.md https://raw.githubusercontent.com/pedro2555/fsn/master/README.md
 deploy:
   provider: pages
   local-dir: build/github.io
