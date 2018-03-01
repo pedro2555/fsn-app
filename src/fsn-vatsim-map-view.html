@@ -17,7 +17,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<link rel="import" href="../bower_components/google-map/google-map.html">
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="shared-styles.html">
@@ -33,7 +32,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
         width: 100%;
       }
       google-map {
-        height: calc(100vh - 64px);
+        height: 100%;
       }
     </style>
 
@@ -54,9 +53,20 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
   </template>
 
+  <script src="google.maps.prototypes.js"></script>
   <script>
     class FsnVatsimMapView extends Polymer.Element {
       static get is() { return 'fsn-vatsim-map-view'; }
+
+      static get properties() {
+        return {
+          viewport: {
+            type: Object,
+            notify: true,
+            value: null
+          }
+        }
+      }
 
       static get observers() {
         return [
@@ -66,19 +76,60 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
       ready() {
         super.ready();
-        // map events binding
-        this.$.map.addEventListener('google-map-drag', e => {this._mapDragCallback(e)});
-        this.$.map.addEventListener('zoom-changed', e => {this._mapZoomCallback(e)});
-        // schedule update
-        window.requestAnimationFrame(this._frameCallback.bind(this));
       }
 
+      connectedCallback() {
+        super.connectedCallback();
+        // map events binding
+        this.$.map.addEventListener(
+          'latitude-changed',
+          e => {this._mapDragCallback(e)});
+        this.$.map.addEventListener(
+          'longitude-changed',
+          e => {this._mapDragCallback(e)});
+        this.$.map.addEventListener(
+          'zoom-changed',
+          e => {this._mapDragCallback(e)});
+          this.$.map.addEventListener(
+          'google-map-ready',
+          e => {registerGoogleMapsPrototypes()});
+      }
+
+      /**
+       * Grabs the center position visible on the map
+       */
       _mapDragCallback() {
-        console.log('_mapDragCallback');
+        let viewport = this.$.map.map.getBounds();
+        // parse corners
+        let NE = viewport.getNorthEast();
+        let SW = viewport.getSouthWest();
+        let NW = new google.maps.LatLng(NE.lat(), SW.lng());
+        let SE = new google.maps.LatLng(SW.lat(), NE.lng());
+
+        if (this.viewport) {
+          this.viewport.setMap(null);
+        }
+        let geometry = [NE, NW, SW, SE];
+        console.log(JSON.stringify(SE));
+        this.viewport = new google.maps.Polygon({
+          paths: geometry,
+          strokeColor: '#FF0000',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#FF0000',
+          fillOpacity: 0.35
+        });
+        this.viewport.setMap(this.$.map.map);
       }
+
+      /**
+       * Computes the diagonal distance, in meters, visible on the map
+       */
       _mapZoomCallback() {
-        console.log('_mapZoomCallback');
+        this.mapComputedViewPort = this.$.map.map.getBounds();
+        console.log(this.mapComputedViewPort.toJSON());
       }
+
       _frameCallback() {
         console.log('_frameCallback');
       }
