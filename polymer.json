@@ -3,6 +3,7 @@
   "shell": "src/fsn-app.html",
   "fragments": [
     "src/fsn-vatsim-events-view.html",
+    "src/fsn-vatsim-map-view.html",
     "src/fsn-weather-view.html",
     "src/fsn-oceanic-report-view.html",
     "src/fsn-404-view.html"

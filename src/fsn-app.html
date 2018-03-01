@@ -36,9 +36,10 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="import" href="../bower_components/app-menu/app-menu-icon-item.html">
 <link rel="import" href="my-icons.html">
 
+<link rel="lazy-import" href="fsn-vatsim-events-view.html">
+<link rel="lazy-import" href="fsn-vatsim-map-view.html">
 <link rel="lazy-import" href="fsn-weather-view.html">
 <link rel="lazy-import" href="fsn-oceanic-report-view.html">
-<link rel="lazy-import" href="fsn-vatsim-events-view.html">
 <link rel="lazy-import" href="fsn-404-view.html">
 
 <dom-module id="fsn-app">
@@ -124,6 +125,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
                 <iron-icon icon="expand-more"></iron-icon>
               </div>
               <app-menu slot="submenu-content">
+                <a name="vatsim-map" class="app-menu-item" href="#/vatsim/vatsim-map">Map (Beta)</a>
                 <a name="vatsim-events" class="app-menu-item" href="#/vatsim/vatsim-events">Events (Beta)</a>
               </app-menu>
             </app-submenu>
@@ -162,6 +164,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
             fallback-selection="404"
             role="main">
           <fsn-vatsim-events-view name="vatsim-events"></fsn-vatsim-events-view>
+          <fsn-vatsim-map-view name="vatsim-map"></fsn-vatsim-map-view>
           <fsn-weather-view name="weather"></fsn-weather-view>
           <fsn-oceanic-report-view name="oceanic-report"></fsn-oceanic-report-view>
           <fsn-404-view name="404"></fsn-404-view>

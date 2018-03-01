@@ -1,0 +1,48 @@
+<!--
+@license
+FSN App
+Copyright (C) 2017  Pedro Rodrigues <prodrigues1990@gmail.com>
+
+This file is part of FSN App.
+
+FSN App is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, version 2 of the License.
+
+FSN App is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<link rel="import" href="../bower_components/google-map/google-map.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="fsn-vatsim-map-view">
+  <template is="dom-bind">
+    <style include="shared-styles">
+      :host {
+        display: block;
+        height: calc(100vh - 64px);
+      }
+      google-map {
+        height: calc(100vh - 64px);
+      }
+    </style>
+
+    <google-map
+      api-key="AIzaSyDj4y39JAORYGw4rNcA1y8oVj0m8lNDje4">
+    </google-map>
+
+  </template>
+
+  <script>
+    class FsnVatsimMapView extends Polymer.Element {
+      static get is() { return 'fsn-vatsim-map-view'; }
+    }
+
+    window.customElements.define(FsnVatsimMapView.is, FsnVatsimMapView);
+  </script>
+</dom-module>
