@@ -29,7 +29,8 @@
     "iron-ajax": "PolymerElements/iron-ajax#^2.1.2",
     "iron-scroll-target-behavior": "PolymerElements/iron-scroll-target-behavior#^2.1.0",
     "paper-styles": "PolymerElements/paper-styles#^2.1.0",
-    "google-map": "GoogleWebComponents/google-map#^2.0.4"
+    "google-map": "GoogleWebComponents/google-map#^2.0.4",
+    "paper-progress": "PolymerElements/paper-progress#^2.1.0"
   },
   "resolutions": {
     "polymer": "^2.0.0"

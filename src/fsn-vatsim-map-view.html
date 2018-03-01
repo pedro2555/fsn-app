@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <link rel="import" href="../bower_components/google-map/google-map.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="fsn-vatsim-map-view">
@@ -27,13 +29,27 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
         display: block;
         height: calc(100vh - 64px);
       }
+      paper-progress {
+        width: 100%;
+      }
       google-map {
         height: calc(100vh - 64px);
       }
     </style>
 
+    <iron-ajax
+        id="clientsAjax"
+        handle-as="json"
+        loading="{{_clientsAjaxLoading}}">
+    </iron-ajax>
+
+    <paper-progress
+      id="progressBar">
+    </paper-progress>
     <google-map
-      api-key="AIzaSyDj4y39JAORYGw4rNcA1y8oVj0m8lNDje4">
+      id="map"
+      api-key="AIzaSyDj4y39JAORYGw4rNcA1y8oVj0m8lNDje4"
+      drag-events="true">
     </google-map>
 
   </template>
@@ -41,6 +57,39 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
   <script>
     class FsnVatsimMapView extends Polymer.Element {
       static get is() { return 'fsn-vatsim-map-view'; }
+
+      static get observers() {
+        return [
+            '_clientsAjaxLoadingChanged(_clientsAjaxLoading)'
+        ]
+      }
+
+      ready() {
+        super.ready();
+        // map events binding
+        this.$.map.addEventListener('google-map-drag', e => {this._mapDragCallback(e)});
+        this.$.map.addEventListener('zoom-changed', e => {this._mapZoomCallback(e)});
+        // schedule update
+        window.requestAnimationFrame(this._frameCallback.bind(this));
+      }
+
+      _mapDragCallback() {
+        console.log('_mapDragCallback');
+      }
+      _mapZoomCallback() {
+        console.log('_mapZoomCallback');
+      }
+      _frameCallback() {
+        console.log('_frameCallback');
+      }
+
+      _clientsAjaxLoadingChanged() {
+        if (_clientsAjaxLoading) {
+          this.$.progressBar.indeterminate = true;
+        } else {
+          this.$.progressBar.indeterminate = false;
+        }
+      }
     }
 
     window.customElements.define(FsnVatsimMapView.is, FsnVatsimMapView);
