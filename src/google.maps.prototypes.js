@@ -95,42 +95,22 @@ registerGoogleMapsPrototypes = function() {
   }
 
   /**
-   * Moves the current position by the given distance in the given direction.
-   * return a new LatLng object.
-   *
-   * @param {int} direction - the bearing direction to move to, in degrees.
-   * (will be converted into range 0-359, if falling outside)
-   * @param {int} distance - distance to move by, in meters
-   */
-  google.maps.LatLng.prototype.move = function(direction, distance) {
-
-    let lat1 = google.maps.toRad(this.lat());
-    let lon1 = google.maps.toRad(this.lng());
-
-    distance = distance / 6371;
-    direction = google.maps.toRad(direction);
-
-    let lat2 = Math.asin(
-        Math.sin(lat1) * Math.cos(distance) + Math.cos(lat1)
-      * Math.sin(distance) * Math.cos(direction));
-    let lon2 = lon1 + Math.atan2(
-      Math.sin(direction) * Math.sin(distance) * Math.cos(lat1),
-      Math.cos(distance) - Math.sin(lat1) *  Math.sin(lat2));
-
-    return new google.maps.LatLng(
-      google.maps.toDeg(lat2),
-      google.maps.toDeg(lon2));
-  }
-
-  /**
    * Moves all corners inwards by the given distance
    *
    * @param {int} distance - meters to shrink
    */
   google.maps.LatLngBounds.prototype.shrink = function(distance) {
     return new google.maps.LatLngBounds(
-      this.getNorthEast().move(google.maps.getSouthWest(), distance),
-      this.getSouthWest().move(google.maps.getNorthEast(), distance)
+      google.maps.geometry.spherical.computeOffset(
+        this.getNorthEast(),
+        distance,
+        google.maps.getSouthWest()
+      ),
+      google.maps.geometry.spherical.computeOffset(
+        this.getSouthWest(),
+        distance,
+        google.maps.getNorthEast()
+      )
     );
   }
 

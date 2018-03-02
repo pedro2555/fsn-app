@@ -99,7 +99,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
        * Grabs the center position visible on the map
        */
       _mapDragCallback() {
-        let viewport = this.$.map.map.getBounds().inflate(10);;
+        let viewport = this.$.map.map.getBounds().shrink(10);;
         // parse corners
         let NE = viewport.getNorthEast();
         let SW = viewport.getSouthWest();
