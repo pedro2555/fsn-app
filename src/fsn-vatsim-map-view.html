@@ -100,6 +100,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
        */
       _mapDragCallback() {
         let viewport = this.$.map.map.getBounds();
+        viewport = viewport.shrink(10);
         // parse corners
         let NE = viewport.getNorthEast();
         let SW = viewport.getSouthWest();
@@ -110,7 +111,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
           this.viewport.setMap(null);
         }
         let geometry = [NE, NW, SW, SE];
-        console.log(JSON.stringify(SE));
+        console.log(google.maps.getNorthEast());
         this.viewport = new google.maps.Polygon({
           paths: geometry,
           strokeColor: '#FF0000',
