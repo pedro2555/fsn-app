@@ -134,4 +134,15 @@ registerGoogleMapsPrototypes = function() {
     );
   }
 
+  /**
+   * Moves all corners outwards by the given distance
+   *
+   * === LatLngBounds.prototype.shrink(-distance)
+   *
+   * @param {int} distance - meters to inflate
+   */
+  google.maps.LatLngBounds.prototype.inflate = function(distance) {
+    return this.shrink(-distance);
+  }
+
 }
