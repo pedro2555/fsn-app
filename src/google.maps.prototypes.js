@@ -168,11 +168,8 @@ registerGoogleMapsPrototypes = function() {
    + @param {Object} other - LatLngBounds to call .contains() on
    */
   google.maps.LatLngBounds.prototype.fallsOutside = function(other) {
-    this.getPath().forEach(function (point) {
-      if (!other.contains(point)) {
-        return true;
-      }
+    return this.getPath().some(function(point) {
+      return !other.contains(point);
     });
-    return false;
   }
 }

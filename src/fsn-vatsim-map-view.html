@@ -39,7 +39,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
     <iron-ajax
         id="clientsAjax"
         handle-as="json"
-        loading="{{_clientsAjaxLoading}}">
+        response="{{_clientAjaxResponse}}">
     </iron-ajax>
 
     <paper-progress
@@ -74,7 +74,7 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
       static get observers() {
         return [
-            '_clientsAjaxLoadingChanged(_clientsAjaxLoading)'
+            '_clientAjaxResponseChanged(_clientAjaxResponse)'
         ]
       }
 
@@ -84,6 +84,10 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
       connectedCallback() {
         super.connectedCallback();
+        this.$.clientsAjax.addEventListener(
+          'response-changed',
+          this._clientAjaxResponseChanged
+        );
         // map events binding
         this.$.map.addEventListener(
           'latitude-changed',
@@ -105,35 +109,42 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
       _mapDragCallback() {
         let viewport = this.$.map.map.getBounds();
 
-        console.log('');
-        // get the first planes going
-        if (   this.requestViewport == undefined
-            || viewport.fallsOutside(this.requestViewport)) {
-          this.requestViewport = viewport.inflate(
-            viewport.getLongestDistance() * .1);
-
-            console.log('get some data()');
+        if (this._checkViewportForUpdate(viewport)) {
+          this.requestViewport = viewport;
+          // this.requestViewport = viewport.inflate(
+          //   viewport.getLongestDistance() * .5);
+          console.log('get some data');
         }
       }
 
       /**
-       * Computes the diagonal distance, in meters, visible on the map
+       * Validates the last gathered data and returns true if any of the
+       * checked paremeters indicate the current data is not up to date or
+       * falls outside the current viewport
+       *
+       * @param {google.maps.LatLngBounds} viewport - OPTIONAL the current
+       * visible map area
        */
-      _mapZoomCallback() {
-        this.mapComputedViewPort = this.$.map.map.getBounds();
-        console.log(this.mapComputedViewPort.toJSON());
-      }
-
-      _frameCallback() {
-        console.log('_frameCallback');
-      }
-
-      _clientsAjaxLoadingChanged() {
-        if (_clientsAjaxLoading) {
-          this.$.progressBar.indeterminate = true;
-        } else {
-          this.$.progressBar.indeterminate = false;
+      _checkViewportForUpdate(viewport=null) {
+        // get the first planes going
+        if (!this.requestViewport) {
+          return true;
         }
+
+        if (viewport != null) {
+          // check if we've moved to far since the last request
+          if (viewport.fallsOutside(this.requestViewport)) {
+            return true;
+          }
+        }
+
+        // TODO: check for the last time we've gathered data
+
+        return false;
+      }
+
+      _clientAjaxResponseChanged() {
+        console.log('response: ' + this.$._clientAjaxResponse);
       }
     }
 
