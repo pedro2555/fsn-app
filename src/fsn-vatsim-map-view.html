@@ -60,6 +60,10 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
 
       static get properties() {
         return {
+          requestViewport: {
+            type: Object,
+            value: null
+          },
           viewport: {
             type: Object,
             notify: true,
@@ -99,27 +103,17 @@ along with FSN App.  If not, see <http://www.gnu.org/licenses/>.
        * Grabs the center position visible on the map
        */
       _mapDragCallback() {
-        let viewport = this.$.map.map.getBounds().shrink(10);;
-        // parse corners
-        let NE = viewport.getNorthEast();
-        let SW = viewport.getSouthWest();
-        let NW = new google.maps.LatLng(NE.lat(), SW.lng());
-        let SE = new google.maps.LatLng(SW.lat(), NE.lng());
+        let viewport = this.$.map.map.getBounds();
 
-        if (this.viewport) {
-          this.viewport.setMap(null);
+        console.log('');
+        // get the first planes going
+        if (   this.requestViewport == undefined
+            || viewport.fallsOutside(this.requestViewport)) {
+          this.requestViewport = viewport.inflate(
+            viewport.getLongestDistance() * .1);
+
+            console.log('get some data()');
         }
-        let geometry = [NE, NW, SW, SE];
-        console.log(google.maps.getNorthEast());
-        this.viewport = new google.maps.Polygon({
-          paths: geometry,
-          strokeColor: '#FF0000',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.35
-        });
-        this.viewport.setMap(this.$.map.map);
       }
 
       /**

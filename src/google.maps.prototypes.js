@@ -125,4 +125,54 @@ registerGoogleMapsPrototypes = function() {
     return this.shrink(-distance);
   }
 
+  /**
+   * Computes distance between the NorthEast and SouthWest coordinates
+   *
+   * in meters
+   */
+  google.maps.LatLngBounds.prototype.getLongestDistance = function() {
+    return google.maps.geometry.spherical.computeDistanceBetween(
+      this.getNorthEast(),
+      this.getSouthWest()
+    );
+  }
+
+  /**
+   * Returns an array of LatLng objects representig the path of the current
+   * bounds.
+   */
+  google.maps.LatLngBounds.prototype.getPath = function() {
+    let NE = this.getNorthEast();
+    let SW = this.getSouthWest();
+    let NW = new google.maps.LatLng(NE.lat(), SW.lng());
+    let SE = new google.maps.LatLng(SW.lat(), NE.lng());
+
+    return [NE, NW, SW, SE];
+  }
+
+  /**
+   * Returns the current LatLngBounds as a google.maps.Polygon Object
+   *
+   * @param {Object} polygonParams - the Polygon parameters to be passed to the
+   * Polygon constructor function, excluding any path.
+   */
+  google.maps.LatLngBounds.prototype.toPolygon = function(polygonParams = {}) {
+    return new google.maps.Polygon(Object.assign(
+      {}, { paths: this.getPath() }, polygonParams));
+  }
+
+  /**
+   * Returns true if other.contains() is false for any of the LatLng points
+   * returned by the .toPolygon() function
+   *
+   + @param {Object} other - LatLngBounds to call .contains() on
+   */
+  google.maps.LatLngBounds.prototype.fallsOutside = function(other) {
+    this.getPath().forEach(function (point) {
+      if (!other.contains(point)) {
+        return true;
+      }
+    });
+    return false;
+  }
 }
