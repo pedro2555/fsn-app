@@ -55,7 +55,7 @@
         return {
           'transponder': {
             'type': String,
-            'value': '5a89dfead6baf40004dbae4b',
+            'value': '',
             'notify': true
           },
           'where': {
@@ -126,7 +126,7 @@
           if (!this.lastSeen || !this.lastSeen > timestamp) {
             this.lastSeen = timestamp;
           }
-          
+
           this.chartData.push([
             timestamp.toDate(),
             data[i].altitude,
