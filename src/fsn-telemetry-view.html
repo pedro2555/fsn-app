@@ -3,9 +3,9 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="../bower_components/google-chart/google-chart.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="moment-js.html">
 <link rel="import" href="shared-styles.html">
-<link rel="lazy-import" href="my-view404.html">
 
 <dom-module id="fsn-telemetry-view">
   <template is="dom-bind">
@@ -30,9 +30,6 @@
     </iron-ajax>
 
       <paper-card class="card" heading="Live Altitude Data">
-        <paper-input
-          value="{{transponder}}"
-          label="Transponder"></paper-input>
 
         <google-chart
           id="chart"
@@ -41,6 +38,12 @@
           cols='[{"label":"time", "type":"datetime"}, {"label":"Altitude", "type":"number"}]'
           rows='{{chartData}}'>
         </google-chart>
+
+        <paper-card-actions>
+          <paper-input
+            value="{{transponder}}"
+            label="Transponder"></paper-input>
+        </paper-card-actions>
       </paper-card>
     </template>
 
